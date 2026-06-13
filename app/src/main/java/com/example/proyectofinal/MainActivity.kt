@@ -1,20 +1,48 @@
 package com.example.proyectofinal
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var etTarea: EditText
+    private lateinit var btnAgregar: Button
+    private lateinit var listaTareas: ListView
+
+    private val tareas = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        etTarea = findViewById(R.id.etTarea)
+        btnAgregar = findViewById(R.id.btnAgregar)
+        listaTareas = findViewById(R.id.listaTareas)
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            tareas
+        )
+
+        listaTareas.adapter = adapter
+
+        btnAgregar.setOnClickListener {
+
+            val nuevaTarea = etTarea.text.toString()
+
+            if (nuevaTarea.isNotEmpty()) {
+
+                tareas.add(nuevaTarea)
+
+                adapter.notifyDataSetChanged()
+
+                etTarea.text.clear()
+            }
         }
     }
 }
