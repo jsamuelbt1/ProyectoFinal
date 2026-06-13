@@ -44,5 +44,11 @@ class MainActivity : AppCompatActivity() {
                 etTarea.text.clear()
             }
         }
+        listaTareas.setOnItemClickListener { _, _, position, _ -> //position significa la posición del elemento tocado
+
+            tareas.removeAt(position)  //elimina la tarea
+
+            adapter.notifyDataSetChanged()
+        }
     }
 }
