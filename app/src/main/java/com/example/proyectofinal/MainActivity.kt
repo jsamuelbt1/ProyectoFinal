@@ -12,8 +12,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etTarea: EditText
     private lateinit var btnAgregar: Button
     private lateinit var listaTareas: ListView
-
     private val tareas = ArrayList<String>()
+
+    private fun guardarTareas() { //funcion para guardar tareas
+
+        val preferencias = getSharedPreferences("MisTareas", MODE_PRIVATE)
+
+        val editor = preferencias.edit()
+
+        editor.putStringSet("listaTareas", tareas.toSet())
+
+        editor.apply()
+    }
+
+    private fun cargarTareas() { //función para cargar tareas
+
+        val preferencias = getSharedPreferences("MisTareas", MODE_PRIVATE)
+
+        val tareasGuardadas =
+            preferencias.getStringSet("listaTareas", emptySet())
+
+        tareas.clear()
+
+        tareas.addAll(tareasGuardadas!!)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         )
 
         listaTareas.adapter = adapter
+        cargarTareas()
+        adapter.notifyDataSetChanged()
 
         btnAgregar.setOnClickListener {
 
@@ -39,6 +63,8 @@ class MainActivity : AppCompatActivity() {
 
                 tareas.add(nuevaTarea)
 
+                guardarTareas()
+
                 adapter.notifyDataSetChanged()
 
                 etTarea.text.clear()
@@ -47,6 +73,10 @@ class MainActivity : AppCompatActivity() {
         listaTareas.setOnItemClickListener { _, _, position, _ -> //position significa la posición del elemento tocado
 
             tareas.removeAt(position)  //elimina la tarea
+
+            guardarTareas()
+
+            etTarea.requestFocus() //despues de borrar las tareas vuelve a dar el foco al EditText porque borraba tareas y no se desplegaba de nuevo el teclado
 
             adapter.notifyDataSetChanged()
         }
